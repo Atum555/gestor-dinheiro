@@ -160,6 +160,8 @@ def adicionar_movimento_erro():
 
 def tipo(valor):
     while True:
+        limpar()
+        print("\n---- ADICIONAR MOVIMENTO ----")
         print(f"Digite um valor: {valor}")
         tipo_escolha = input("Digite o Tipo ['Gasto' ou 'Recebido']: ").strip().title()
         if tipo_escolha not in ["Gasto", "Recebido"]:
