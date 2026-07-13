@@ -4,6 +4,10 @@ import pandas as pd
 import os
 import time
 
+# ---- Globais ----
+
+sessao_iniciada = False
+
 # ---- Banco de dados  ----
 
 Base = declarative_base()
@@ -39,7 +43,7 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 sessao = Session()
 
-# ---- Codigo  aussilair ----
+# ---- Codigo  auxiliar ----
 
 def limpar():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -51,7 +55,7 @@ def continuar(print_continuar, apagar=True):
         print(print_continuar)
         resposta = input("Continuar [Y]:  ").upper()
         if resposta != "Y":
-            print("\n---- ESCOLHA INDESPONIVEL -----\n")
+            print("\n---- ESCOLHA INDISPONIVEL -----\n")
             continue
         return 
     
@@ -69,22 +73,22 @@ def verificar(email_conta):
     email_verificacao = sessao.query(Banco).filter_by(email=email_conta).first()
 
     if email_verificacao is not None:
-        continuar("\n---- ESSE EMAIL JÁ ESTA ASSUCIADO A UMA CONTA ----\n")
+        continuar("\n---- ESSE EMAIL JÁ ESTA ASSOCIADO A UMA CONTA ----\n")
         return True
     return False
 
-def idade_insufeciente(email_bloqueado, idade_insufeciente):
+def idade_insuficiente(email_bloqueado, idade_insuficiente):
     email_procura = sessao.query(Emails_bloqueado).filter_by(email=email_bloqueado).first()
-    if email_procura is None and idade_insufeciente >= 18:
+    if email_procura is None and idade_insuficiente >= 18:
         return False
     
     if email_procura is None:
-        continuar("\n---- NÃO TENS IDADE SUFECIENTE ----\n")
-        p = Emails_bloqueado(email=email_bloqueado, idade=idade_insufeciente)
+        continuar("\n---- NÃO TENS IDADE SUFICIENTE ----\n")
+        p = Emails_bloqueado(email=email_bloqueado, idade=idade_insuficiente)
         sessao.add(p)
         sessao.commit()
     else:
-        print(f"\n---- IDADE FALSA ----") 
+        print("\n---- IDADE FALSA ----") 
     return True
 
 def continuar_criar_conta():
@@ -95,7 +99,7 @@ def continuar_criar_conta():
             print("\n---- ISSO NÃO É UM NUMERO ----")
             continue
         if escolha_continuar not in [1, 2, 3]:
-            print("\n---- ESCOLHA ÍNDESPONIVEL ----")
+            print("\n---- ESCOLHA INDISPONIVEL ----")
             continue
         return escolha_continuar
 
@@ -109,7 +113,7 @@ def continuar_iniciar_sessao():
             continuar("\n---- ISSO NÃO É UM NUMERO ----\n")
             continue
         if escolha not in [1, 2]:
-            continuar("\n---- ESCOLHA ÍNDESPONIVEL ----\n")
+            continuar("\n---- ESCOLHA INDISPONIVEL ----\n")
             continue
         return escolha
     
@@ -131,14 +135,14 @@ def adicionar_movimento_erro():
             continuar("\n---- ISSO NÃO É UM NUMERO ----\n")
             continue
         if escolha_erro not in [1, 2]:
-            continuar("\n---- ESCOLHA ÍNDESPONIVEL ----\n")
+            continuar("\n---- ESCOLHA INDISPONIVEL ----\n")
             continue
         return escolha_erro
     
 def tipo(valor):
     while True:
-        print(f"Digite um valor: {float(valor)}")
-        tipo_escolha = input("Digite o Tipo ['Gasto' ou 'Reccebido']: ").strip().title()
+        print(f"Digite um valor: {valor}")
+        tipo_escolha = input("Digite o Tipo ['Gasto' ou 'Recebido']: ").strip().title()
         if tipo_escolha not in ['Gasto', 'Recebido']:
             continuar("\n---- NÃO ESTA NAS OPÇÕES ----\n")
             limpar()
@@ -158,7 +162,7 @@ def menu_inicial():
             continuar("\n---- ISSO NÃO É UM NUMERO ----\n")
             continue
         if escolha_inicial not in [1, 2, 3]:
-            continuar("\n---- ESCOLHA INDESPONIVEL -----\n")
+            continuar("\n---- ESCOLHA INDISPONIVEL -----\n")
             continue
 
         if escolha_inicial == 1:
@@ -171,7 +175,7 @@ def menu_inicial():
                 senha_conta = input("Digite sua senha: ").strip()
 
                 email_verificacao = verificar(email_conta)
-                nao_pode_criar_conta = idade_insufeciente(email_bloqueado=email_conta, idade_insufeciente=idade_conta)
+                nao_pode_criar_conta = idade_insuficiente(email_bloqueado=email_conta, idade_insuficiente=idade_conta)
                 
                 if nao_pode_criar_conta or email_verificacao:
                     continue
@@ -214,7 +218,7 @@ def menu_inicial():
             print("\n---------- ADEUS ----------\n")
             return escolha_inicial
         else:
-            continuar("\n---- ESCOLHA ÍNDESPONIVEL ----\n")
+            continuar("\n---- ESCOLHA INDISPONIVEL ----\n")
             continue
 
 def menu(utilizador):
@@ -225,10 +229,10 @@ def menu(utilizador):
         try:
             escolha = int(input("1. Adicionar um movimento\n2. Ver todos os movimentos\n3. Ver quanto gasto por categoria\n4. Terminar sessão\nEscolha: "))
         except ValueError:
-            continuar("\n---- ESCOLHA ÍNDESPONIVEL ----\n")
+            continuar("\n---- ESCOLHA INDISPONIVEL ----\n")
             return
         if escolha not in [1, 2, 3, 4]:
-            continuar("\n---- ESCOLHA ÍNDESPONIVEL ----\n")
+            continuar("\n---- ESCOLHA INDISPONIVEL ----\n")
             return
         
         if escolha == 1:
@@ -295,14 +299,16 @@ def menu(utilizador):
 
 # ---- INICIO -----
 
-sessao_iniciada = False
+def main():
+    while True:
+        if sessao_iniciada is False:
+            utilizador = menu_inicial()
+            if utilizador == 3:
+                break
+            else:
+                continue
+        menu(utilizador)
 
-while True:
-    if sessao_iniciada is False:
-        utilizador = menu_inicial()
-        if utilizador == 3:
-            break
-        else:
-            continue
-    menu(utilizador)
-    
+
+if __name__ == "__main__":
+    main()
