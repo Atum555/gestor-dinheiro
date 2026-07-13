@@ -119,7 +119,7 @@ def verificar_valor_escolha(valor_escolha1, data_escolha1):
         valor_escolha = float(valor_escolha1)
         data_escolha = int(data_escolha1)
     except ValueError:
-        continuar("\n---- VALOR OU ESCOOLHA NÃO SÃO NUMEROS ----\n")
+        continuar("\n---- VALOR OU ESCOLHA NÃO SÃO NUMEROS ----\n")
         return True
     return False
 
@@ -135,8 +135,9 @@ def adicionar_movimento_erro():
             continue
         return escolha_erro
     
-def tipo():
+def tipo(valor):
     while True:
+        print(f"Digite um valor: {float(valor)}")
         tipo_escolha = input("Digite o Tipo ['Gasto' ou 'Reccebido']: ").strip().title()
         if tipo_escolha not in ['Gasto', 'Recebido']:
             continuar("\n---- NÃO ESTA NAS OPÇÕES ----\n")
@@ -235,7 +236,7 @@ def menu(utilizador):
                 limpar()
                 print("\n---- ADICIONAR MOVIMENTO ----")
                 valor_escolha = input("Digite o Valor: ")
-                tipo_escolha = tipo()
+                tipo_escolha = tipo(valor=valor_escolha)
                 categoria_escolha = input("Digite a Categoria: ").strip().title()
                 descricao_escolha = input("Digite a Descrição: ").strip().title()
                 data_escolha = input("Data da ação (Exemplo[22062025]): ")
@@ -301,5 +302,7 @@ while True:
         utilizador = menu_inicial()
         if utilizador == 3:
             break
+        else:
+            continue
     menu(utilizador)
     
